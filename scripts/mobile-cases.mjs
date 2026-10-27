@@ -1,0 +1,14 @@
+import { chromium } from "playwright-core";
+import { USERS, signIn } from "./creds.mjs";
+const CHROME = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe";
+const OUT = "C:\\Users\\ASUGIR\\Desktop\\Bumsa\\rrs-asv\\screenshots";
+const browser = await chromium.launch({ executablePath: CHROME, headless: true });
+const page = await (await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true })).newPage();
+await signIn(page, USERS.ipo1);
+await page.locator(".mobile-only").click();
+await page.waitForTimeout(200);
+await page.locator(".nav-item", { hasText: "Cases" }).click();
+await page.waitForSelector(".table-cases");
+await page.waitForTimeout(400);
+await page.screenshot({ path: `${OUT}\\19-mobile-cases.png` });
+await browser.close();
