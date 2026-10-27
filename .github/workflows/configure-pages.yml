@@ -1,0 +1,32 @@
+name: Configure GitHub Pages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+
+jobs:
+  configure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show current Pages configuration
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api "repos/${{ github.repository }}/pages"
+
+      - name: Set Pages source to GitHub Actions and enforce HTTPS
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api --method PUT "repos/${{ github.repository }}/pages" \
+            -f build_type=workflow \
+            -F https_enforced=true
+
+      - name: Show resulting Pages configuration
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api "repos/${{ github.repository }}/pages"
